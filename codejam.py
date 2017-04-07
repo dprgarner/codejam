@@ -19,6 +19,13 @@ def get_lines_from_file(input_file):
 
 
 class CodeJamParser(object):
+    """
+    Extend this class, overriding the methods get_cases and handle_case.
+
+    Use this class by initialising at the top level, and either piping to
+    stdin/stdout, or specifying the input and output in the command-line
+    arguments.
+    """
     def __init__(self):
         self.source = get_lines_from_stdin()
         if len(sys.argv) > 1:
@@ -45,6 +52,7 @@ class CodeJamParser(object):
 
     def handle_case(self, *args):
         raise NotImplementedError(
-            'Override this method to take the same number of arguments as'
-            'were yielded from get_cases, and output the resulting string.'
+            'Override this method, taking the same number of arguments as '
+            'were yielded in each iteration of get_cases, and output the '
+            'resulting string.'
         )

@@ -1,7 +1,11 @@
-from codejam import CodeJamParser
+from ..codejam import CodeJamParser
 
 
 class Ovation(CodeJamParser):
+    """
+    2015, Qualification round, A
+    https://code.google.com/codejam/contest/6224486/dashboard
+    """
     def get_cases(self):
         cases = int(next(self.source))
         for i in range(1, cases + 1):
