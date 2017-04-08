@@ -1,4 +1,4 @@
-from ..codejam import CodeJamParser
+from codejam import CodeJamParser
 
 
 class Ovation(CodeJamParser):
