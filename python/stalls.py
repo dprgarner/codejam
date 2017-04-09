@@ -84,6 +84,10 @@ class Stalls(CodeJamParser):
 
     This solution has a bug in it, somewhere... the output produced for the
     large dataset was incorrect, although the smaller ones were correct.
+
+    From looking at the post-contest analysis, it looks like my approach
+    is similar, but their loop is much simpler... perhaps the error comes from
+    assuming that the largest possible block sizes always come in pairs. Oh well.
     """
     def get_cases(self):
         cases = int(next(self.source))
