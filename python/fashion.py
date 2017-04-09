@@ -104,6 +104,9 @@ class Fashion(CodeJamParser):
     """
     2017, Qualification round, C
     https://code.google.com/codejam/contest/3264486/dashboard#s=p2
+
+    This approach doesn't work :( I'm filling the cross-only ('bishops')
+    squares greedily from the top left, while this won't be optimal in general.
     """
     def get_cases(self):
         cases = int(next(self.source))

@@ -81,6 +81,9 @@ class Stalls(CodeJamParser):
     """
     2017, Qualification round, C
     https://code.google.com/codejam/contest/3264486/dashboard#s=p2
+
+    This solution has a bug in it, somewhere... the output produced for the
+    large dataset was incorrect, although the smaller ones were correct.
     """
     def get_cases(self):
         cases = int(next(self.source))
