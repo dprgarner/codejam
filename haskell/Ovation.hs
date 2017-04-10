@@ -1,3 +1,7 @@
+-- 2015, Qualification round, A
+-- https://code.google.com/codejam/contest/6224486/dashboard
+--
+
 module Main where
 
 import Data.Char (digitToInt)
