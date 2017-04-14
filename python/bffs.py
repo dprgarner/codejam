@@ -15,11 +15,11 @@ class BFFs(CodeJamParser):
             yield [int(bff) for bff in bffs_str.split(' ')],
 
     def handle_case(self, bffs):
-        # Build semipermutation as dict
-        semiperm = {}
+        # Build the mapping as a dict.
+        mapping = {}
         n = len(bffs)
         for i, dest in enumerate(bffs):
-            semiperm[i+1] = dest
+            mapping[i+1] = dest
 
         # First, find the largest cycle.
         # Assign k:v to this when we find whether k is in a cycle of size v.
@@ -38,7 +38,7 @@ class BFFs(CodeJamParser):
                         largest_cycles[i] = -1
                     break
                 cycle.append(index)
-                index = semiperm.get(index)
+                index = mapping.get(index)
 
             if largest_cycles.get(index):
                 continue
@@ -69,7 +69,7 @@ class BFFs(CodeJamParser):
                         largest_paths[i] = -1
                     break
                 path.append(index)
-                index = semiperm.get(index)
+                index = mapping.get(index)
 
             if largest_paths.get(start) != -1:
                 # Path has ended in the 2-cycle at (index)
@@ -79,10 +79,10 @@ class BFFs(CodeJamParser):
 
         # Find all 2-cycles
         two_cycles = [
-            (a, semiperm[a])
+            (a, mapping[a])
             for a in range(1, n+1)
             if largest_cycles[a] == 2
-            and a < semiperm[a]
+            and a < mapping[a]
         ]
         # Find the maximum length of the paths which end at each side of the
         # 2-cycle, to find the largest 'double-path' ending in a 2-cycle at
