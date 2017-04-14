@@ -102,8 +102,8 @@ def _handle_case(grid):
 
 class Fashion(CodeJamParser):
     """
-    2017, Qualification round, C
-    https://code.google.com/codejam/contest/3264486/dashboard#s=p2
+    2017, Qualification round, D
+    https://code.google.com/codejam/contest/3264486/dashboard#s=p3
 
     This approach doesn't work :( I'm filling the cross-only ('bishops')
     squares greedily from the top left, while this won't be optimal in general.
