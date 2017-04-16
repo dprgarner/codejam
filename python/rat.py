@@ -41,9 +41,9 @@ class Ratatouille(CodeJamParser):
                 # never make it into a kit, and the while loop accounts for
                 # this.
                 servings_ranges[i].append((min_servings, max_servings))
+            # Sorts by min_servings first, then max_servings.
             servings_ranges[i] = sorted(servings_ranges[i])
 
-        print (servings_ranges)
         kits = 0
         while all([bool(packages) for packages in servings_ranges]):
             # Start from the first column, find if an integer lies in all
