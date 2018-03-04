@@ -5,7 +5,6 @@ from codejam import CodeJamParser
 class Poetry(CodeJamParser):
     """
     2015, Qualification round, A
-    https://code.google.com/codejam/contest/3264486/dashboard
     """
     def get_cases(self):
         cases = int(next(self.source))
