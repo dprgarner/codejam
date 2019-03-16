@@ -6,11 +6,7 @@ from os import sys
 import math
 
 
-class GopherComplete(Exception):
-    pass
-
-
-class BaseInteractiveCaseHandler():
+class BaseCaseHandler():
     """
     Boilerplate class.
     """
@@ -41,7 +37,11 @@ class BaseInteractiveCaseHandler():
         raise NotImplementedError
 
 
-class CaseHandler(BaseInteractiveCaseHandler):
+class GopherComplete(Exception):
+    pass
+
+
+class CaseHandler(BaseCaseHandler):
     """
     https://codingcompetitions.withgoogle.com/codejam/round/00000000000000cb/0000000000007a30
     """
