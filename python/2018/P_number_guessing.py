@@ -42,6 +42,10 @@ TOO_BIG = 'TOO_BIG'
 
 
 class CaseHandler(BaseInteractiveCaseHandler):
+    """
+    https://codingcompetitions.withgoogle.com/codejam/round/0000000000000130/0000000000000523#
+    """
+
     def handle_case(self, _):
         a, b = (int(x) for x in self.read().split(' '))
         n = int(self.read())
