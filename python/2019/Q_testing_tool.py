@@ -163,9 +163,14 @@ class Case:
 def getTestCases(test_number):
     F = (10, 5)[test_number]
     # You can edit or add your own test cases here.
-    cases = [Case([1, 2, 3], 4, F), Case(
-        [2, 3, 5], 6, F), Case([1000], 1024, F)]
-    # cases = [Case(sorted([1000, 999, 998, 997]), 1001, F)]
+    cases = [
+        Case([1, 2, 3], 4, F),
+        Case([2, 3, 5], 6, F),
+        Case([5], 8, F),
+        Case([10], 32, F),
+        Case([1000], 1024, F),
+        Case(sorted([1000, 999, 998, 997]), 1001, F),
+    ]
 
     return cases
 
