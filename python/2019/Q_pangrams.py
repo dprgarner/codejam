@@ -71,13 +71,13 @@ class CaseHandler(BaseInteractiveCaseHandler):
                 break
 
         p = self.gcd(pps[i], pps[i+1])
-        pairs[i] = (pps[i] / p, p)
+        pairs[i] = (pps[i] // p, p)
 
         for j in range(i, 0, -1):
-            pairs[j - 1] = pps[j - 1] / pairs[j][0], pairs[j][0]
+            pairs[j - 1] = pps[j - 1] // pairs[j][0], pairs[j][0]
 
         for j in range(i, len(pps) - 1):
-            pairs[j + 1] = pairs[j][1], pps[j + 1] / pairs[j][1]
+            pairs[j + 1] = pairs[j][1], pps[j + 1] // pairs[j][1]
 
         return pairs
 
