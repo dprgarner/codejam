@@ -36,6 +36,56 @@ class BaseInteractiveCaseHandler():
         raise NotImplementedError
 
 
+def count_diags(rows, cols, I, J):
+    """
+    Count all cells in the same diagonal as I and J, excluding (I, J).
+    """
+    total = 0
+    # Count i, j s.t. i-j == I-J
+    # 0 <= j = i - (I - J) < cols
+    total += (
+        min(rows, cols + I - J)
+        - max(0, I - J)
+    )
+
+    # Count i, j s.t. i+j == I+J
+    # 0 <= j = I + J - i < cols
+    total += (
+        min(rows, I + J + 1)
+        - max(0, I + J - cols + 1)
+    )
+    return total - 2
+
+
+def get_diags(rows, cols, I, J):
+    """
+    Return a list of tuples of all the entries in the same diagonal as (I, J),
+    excluding (I, J).
+    """
+
+    pairs = []
+    # Iterate over i, j s.t. i-j == I-J
+    # 0 <= j = i - (I - J) < cols
+    for i in range(
+        max(0, I - J),
+        min(rows, cols + I - J)
+    ):
+        j = i - I + J
+        if i != I:
+            pairs.append((i, j))
+
+    # Iterate over i, j s.t. i+j == I+J
+    # 0 <= j = I + J - i < cols
+    for i in range(
+        max(0, I + J - cols + 1),
+        min(rows, I + J + 1)
+    ):
+        j = I + J - i
+        if i != I:
+            pairs.append((i, j))
+    return pairs
+
+
 POSSIBLE = 'POSSIBLE'
 IMPOSSIBLE = 'IMPOSSIBLE'
 
@@ -45,6 +95,7 @@ class CaseHandler(BaseInteractiveCaseHandler):
     https://codingcompetitions.withgoogle.com/codejam/round/0000000000051635/0000000000104e03
 
     Practice, ~1h35, 3 incorrects
+    Cleaned-up with util functions and code comments
     """
 
     def handle_case(self, i):
@@ -63,52 +114,39 @@ class CaseHandler(BaseInteractiveCaseHandler):
 
     def print_grid(self, grid):
         print('\n'.join(
-            ' '.join(' X' if c < 0 else (' {}'.format(c) if c < 10 else str(c)) for c in row) for row in grid
-        ))
-        print('\n')
-
-    def count_one_diag(self, rows, cols, i, j):
-        # assume cols >= rows
-        total = -1
-        if cols < rows:
-            i, j = j, i
-            rows, cols = cols, rows
-        delta = cols - rows
-        if j - i >= 0 and j - i < delta:
-            total += rows
-        elif j - i >= delta:
-            total += rows - (j - i - delta)
-        elif j - i < 0:
-            total += rows - (i - j)
-        else:
-            raise Exception(i, j)
-
-        return total
+            ' '.join(
+                ' X'
+                if c < 0
+                else (
+                    ' {}'.format(c)
+                    if c < 10
+                    else str(c)
+                )
+                for c in row
+            )
+            for row in grid
+        ) + '\n')
 
     def create_grid(self, rows, cols):
-        # Hacky as hell but whatever.
-        # Ignoring diags
-        base = rows + cols - 2
-        # With diags.
         grid = []
         for i in range(rows):
             grid.append([])
             for j in range(cols):
-                count = base + self.count_one_diag(rows, cols, i, j)
+                count = (rows - 1) + (cols - 1) + count_diags(rows, cols, i, j)
                 grid[i].append(count)
-        for i in range(rows):
-            for j in range(cols):
-                grid[i][cols-j - 1] += self.count_one_diag(rows, cols, i, j)
         return grid
 
     def solve(self, rows, cols):
-        # Initial values of each cell: the number of cells it shares a row,
-        # col, diag with.
-        grid = self.create_grid(rows, cols)
-        # raise Exception(self.print_grid(grid))
+        # Greedy algorithm: assign a value to each cell, which is  the number
+        # of cells it shares a row, column, or diagonal with.
+        # On each iteration, check each cell and pick the cell with the most
+        # available cells in the same row, column, and diagonal as that cell.
 
-        # Choose first square
-        last_i, last_j = -cols - rows - 10, -1
+        grid = self.create_grid(rows, cols)
+
+        # Choose the first cell to be something that no cell in the grid
+        # shares a row, column, or diagonal with.
+        last_i, last_j = -cols - rows - 1, -1
 
         entries = []
         while len(entries) < rows * cols:
@@ -127,33 +165,21 @@ class CaseHandler(BaseInteractiveCaseHandler):
                         best_i, best_j = i, j
 
             if best_val < 0:
+                # Ran out of avaiable cells => No solution
                 return
 
             entries.append((best_i, best_j))
             last_i, last_j = best_i, best_j
-            grid[best_i][best_j] -= (2 * rows * cols)
+            grid[best_i][best_j] = -1  # Should not be chosen again
 
-            # Fix values
+            # Decrease value of cells in the same row, col, and diagonal as
+            # best_i, best_j
             for i in range(rows):
                 grid[i][best_j] -= 1
             for j in range(cols):
                 grid[best_i][j] -= 1
-            for c in range(-rows-cols, rows + cols):
-                if (
-                    best_i + c >= 0 and
-                    best_i + c < rows and
-                    best_j + c >= 0 and
-                    best_j + c < cols
-                ):
-                    grid[best_i + c][best_j + c] -= 1
-            for c in range(-rows-cols, rows + cols):
-                if (
-                    best_i + c >= 0 and
-                    best_i + c < rows and
-                    best_j - c >= 0 and
-                    best_j - c < cols
-                ):
-                    grid[best_i + c][best_j - c] -= 1
+            for i, j in get_diags(rows, cols, best_i, best_j):
+                grid[i][j] -= 1
 
         return entries
 
