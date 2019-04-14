@@ -10,18 +10,24 @@ def count_diags(rows, cols, I, J):
     """
     total = 0
     # Count i, j s.t. i-j == I-J
-    # 0 <= j = i - (I - J) < cols
+    # 0 <= i < rows, and
+    # 0 <= j = i - (I - J) < cols, so
+    # I - J <= i < cols + I - J
     total += (
         min(rows, cols + I - J)
         - max(0, I - J)
     )
 
     # Count i, j s.t. i+j == I+J
-    # 0 <= j = I + J - i < cols
+    # 0 <= i < rows, and
+    # 0 <= j = I + J - i < cols, so
+    # I + J - cols < i <= I + J, or equivalently,
+    # I + J - cols + 1 <= i < I + J + 1
     total += (
         min(rows, I + J + 1)
         - max(0, I + J - cols + 1)
     )
+    # (I, J) was counted twice
     return total - 2
 
 
@@ -33,7 +39,9 @@ def get_diags(rows, cols, I, J):
 
     pairs = []
     # Iterate over i, j s.t. i-j == I-J
-    # 0 <= j = i - (I - J) < cols
+    # Rearranging, i must satisfy
+    # 0 <= i < rows
+    # I - J <= i < cols + I - J
     for i in range(
         max(0, I - J),
         min(rows, cols + I - J)
@@ -43,7 +51,9 @@ def get_diags(rows, cols, I, J):
             pairs.append((i, j))
 
     # Iterate over i, j s.t. i+j == I+J
-    # 0 <= j = I + J - i < cols
+    # Rearranging, i must satisfy
+    # 0 <= i < rows
+    # I + J - cols + 1 <= i < I + J + 1
     for i in range(
         max(0, I + J - cols + 1),
         min(rows, I + J + 1)
