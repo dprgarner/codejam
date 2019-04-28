@@ -67,47 +67,42 @@ class CaseHandler(BaseInteractiveCaseHandler):
             'W': [],
         }
         for x, y, d in people:
-            directions[d].append((x, y))
+            if d in ['N', 'S']:
+                directions[d].append(y)
+            else:
+                directions[d].append(x)
 
-        directions['N'].sort(key=lambda xy: xy[1])
-        directions['S'].sort(key=lambda xy: xy[1])
-        directions['E'].sort(key=lambda xy: xy[0])
-        directions['W'].sort(key=lambda xy: xy[0])
+        directions['N'].sort()
+        directions['S'].sort()
+        directions['E'].sort()
+        directions['W'].sort()
 
-        candidates_y = set([
-            y+1 for _, y in directions['N']
-        ] + [
-            y-1 for _, y in directions['S']
-        ] + [0])
-        candidates_x = set([
-            x+1 for x, _ in directions['E']
-        ] + [
-            x-1 for x, _ in directions['W']
-        ] + [0])
+        candidates_x = set([x + 1 for x in directions['E']] + [0])
+        candidates_y = set([y + 1 for y in directions['N']] + [0])
 
-        # No reason to recreate the array on every trial.
-        dir_1d = {}
-        dir_1d['N'] = [y for _, y in directions['N']]
-        dir_1d['S'] = [y for _, y in directions['S']]
-        dir_1d['E'] = [x for x, _ in directions['E']]
-        dir_1d['W'] = [x for x, _ in directions['W']]
-
+        trial_x = -1
         max_val = -1
-        trial = -1, -1
-        # Max. trial cases: 250,000. Looks like it was fast enough.
         for x in sorted(list(candidates_x)):
-            for y in sorted(list(candidates_y)):
-                value = 0
-                value += self.get_n_larger(dir_1d['S'], y)
-                value += self.get_n_smaller(dir_1d['N'], y)
-                value += self.get_n_larger(dir_1d['W'], x)
-                value += self.get_n_smaller(dir_1d['E'], x)
+            value = (
+                self.get_n_larger(directions['W'], x) +
+                self.get_n_smaller(directions['E'], x)
+            )
+            if value > max_val:
+                max_val = value
+                trial_x = x
 
-                if value > max_val:
-                    max_val = value
-                    trial = x, y
+        trial_y = -1
+        max_val = -1
+        for y in sorted(list(candidates_y)):
+            value = (
+                self.get_n_larger(directions['S'], y) +
+                self.get_n_smaller(directions['N'], y)
+            )
+            if value > max_val:
+                max_val = value
+                trial_y = y
 
-        return trial
+        return trial_x, trial_y
 
 
 CaseHandler().run()
