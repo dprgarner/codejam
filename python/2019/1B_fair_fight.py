@@ -1,63 +1,58 @@
 """
-Codejam boilerplate. Copy/paste this file with get_cases and handle_case
-customised.
+https://codingcompetitions.withgoogle.com/codejam/round/0000000000051706/0000000000122838
+Works on the small set, still too slow for the large set.
 """
-from os import sys
 
 
-class BaseInteractiveCaseHandler():
-    """
-    Boilerplate class.
-    """
+def get_capped_pairs_count(i, c_lower, c_upper, ds, cap):
+    # What range is Max(ds[a:b]) < cap, where a <= i <= b?
+    if ds[i] >= cap:
+        return 0
 
-    def __init__(self):
-        self.source = self.get_source()
+    d_lower = i
+    while d_lower > c_lower and ds[d_lower] < cap:
+        d_lower -= 1
+    if ds[d_lower] >= cap:
+        d_lower += 1
 
-    def get_source(self):
-        try:
-            while True:
-                yield sys.stdin.readline()
-        except EOFError:
-            pass
+    d_upper = i + 1
+    while d_upper < c_upper and ds[d_upper - 1] < cap:
+        d_upper += 1
+    if ds[d_upper - 1] >= cap:
+        d_upper -= 1
 
-    def read(self):
-        return next(self.source).strip()
-
-    def write(self, txt):
-        print(str(txt))
-        sys.stdout.flush()
-
-    def run(self):
-        cases = int(next(self.source))
-        for i in range(1, cases + 1):
-            self.handle_case(i)
-
-    def handle_case(self, i):
-        raise NotImplementedError
+    count = (1 + i - d_lower) * (d_upper - i)
+    return count
 
 
-class CaseHandler(BaseInteractiveCaseHandler):
-    """
-    https://codingcompetitions.withgoogle.com/codejam/round/0000000000051706/0000000000122838
-    Quick solution. Doesn't even attempt to solve the large n case.
-    """
+def solve_case(cs, ds, k):
+    n = len(cs)
+    count = 0
 
-    def handle_case(self, i):
-        n, k = (int(x) for x in self.read().split(' '))
-        c_i = [int(x) for x in self.read().split(' ')]
-        d_i = [int(x) for x in self.read().split(' ')]
+    for i in range(n):
+        c_lower = i - 1
+        # For what range is cs[i] the biggest c?
+        while c_lower >= 0 and cs[i] > cs[c_lower]:
+            c_lower -= 1
+        c_lower += 1
+        c_upper = i + 1
+        while c_upper < n and cs[i] >= cs[c_upper]:
+            c_upper += 1
 
-        soln = self.solve(c_i, d_i, k)
-        self.write('Case #{}: {}'.format(i, soln))
-
-    def solve(self, c_i, d_i, k):
-        ff = 0
-        n = len(c_i)
-        for l in range(n):
-            for r in range(l, n):
-                if abs(max(c_i[l:r + 1]) - max(d_i[l:r + 1])) <= k:
-                    ff += 1
-        return ff
+        count += get_capped_pairs_count(i, c_lower, c_upper, ds, cs[i] + k + 1)
+        count -= get_capped_pairs_count(i, c_lower, c_upper, ds, cs[i] - k)
+    return count
 
 
-CaseHandler().run()
+def run():
+    cases = int(input())
+    for i in range(1, cases + 1):
+        n, k = (int(x) for x in input().split(' '))
+        cs = [int(x) for x in input().split(' ')]
+        ds = [int(x) for x in input().split(' ')]
+        soln = solve_case(cs, ds, k)
+        print('Case #{}: {}'.format(i, soln), flush=True)
+
+
+if __name__ == '__main__':
+    run()
