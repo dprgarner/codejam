@@ -1,20 +1,6 @@
 """
 https://codingcompetitions.withgoogle.com/codejam/round/000000000019fd27/0000000000209aa0
-Got nowhere with this one. :(
-
-Plan for solution:
-Partition k into n numbers in the range 1 to n, where the n numbers in the partition can take 1 or 3 possible values.
-E.g. if k = n*n, partitioned into 1 "block" of n * n.
-if k = n*n - 2, partition into 2 "blocks" of (n - 1) * n and 1 * (n - 2).
-
-If 1 possible value: just put the same number on the trace.
-If 3 possible values: rotate around a simple solution.
-
-Is it always possible to partition k into 1 or 3 possible values?
-Not if k = n*n - 1.
-If k = n*n - 1, there's no solution. All but one of the diag elements is "n" and the last one is "n-1", so you'll always have a column of n-1 numbers that can only take n-2 possible values. (It's also impossible to partition into 1 or 3 poss. values.)
-
-Intuition is that there's a solution iff the partition into 1 or 3 values exists, but I've no idea how to prove this.
+Didn't get a working solution for this one. :(
 """
 
 
@@ -45,14 +31,67 @@ def vestigium(matrix):
     return tr, repeated_rows, repeated_cols
 
 
+def find_triple(n, k):
+    """
+    Given n and k, find a,b,c s.t. a(n-2) + b + c == k, where a != b != c and
+    all are in 1 to n.
+    """
+    assert n <= k, "n too big"
+    assert n * n >= k, "n too small"
+    assert k % n != 0, "should not be looking for diff abc"
+    assert k not in {n * n - 1, n + 1}, "no soln"
+    a = k // (n - 2)
+    rem = k % a
+    print(a, rem)
+    raise Exception("TODO")
+
+
+template_matrices = {}
+
+
+def build_cycle_matrix(n):
+    return [[(i % n) + 1 for i in range(s, n + s)] for s in range(n, 0, -1)]
+
+
+def map_matrix(matrix, permutation):
+    print(permutation)
+    if all(k == v for k, v in permutation.items()):
+        return matrix
+    return [[permutation.get(col, col) for col in row] for row in matrix]
+
+
+def multiply_transpositions(*trans):
+    permuted = set()
+    permutation = {}
+    for i, j in trans:
+        permuted.update((i, j))
+    for origin in permuted:
+        destination = origin
+        for i, j in trans:
+            if i == destination:
+                destination = j
+            elif j == destination:
+                destination = i
+        permutation[origin] = destination
+    return permutation
+
+
 def solve_case(n, k):
-    matrix = [
-        [1, 3, 2],
-        [3, 2, 1],
-        [2, 1, 3],
-    ]
-    assert vestigium(matrix) == (k, 0, 0), vestigium(matrix)
-    return matrix
+    if k in {n * n - 1, n + 1}:
+        return None
+
+    if n not in template_matrices:
+        template_matrices[n] = build_cycle_matrix(n)
+    matrix = [row for row in template_matrices[n]]
+
+    if k % n == 0:
+        a = k // n
+        return map_matrix(matrix, {1: a, a: 1})
+
+    a, b, c = find_triple(n, k)
+    matrix.insert(len(matrix) - 2, matrix.pop())
+    permutation = multiply_transpositions((1, a), (2, b), (n, c))
+    return map_matrix(matrix, permutation)
 
 
 def run():
@@ -67,6 +106,7 @@ def run():
                 ),
                 flush=True,
             )
+            assert vestigium(soln) == (k, 0, 0), vestigium(soln)
         else:
             print("Case #{}: IMPOSSIBLE".format(i), flush=True)
 
