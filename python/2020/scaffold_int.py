@@ -30,7 +30,7 @@ class BaseInteractiveCaseHandler:
     def read(self):
         input_ = next(self.source).strip()
         self.debug("In: {}".format(input_))
-        if input_ == "N":
+        if input_ == "-1":
             raise WrongAnswerException
         return input_
 
@@ -46,16 +46,22 @@ class BaseInteractiveCaseHandler:
         sys.stderr.flush()
 
     def run(self):
-        cases = (int(x) for x in self.read().split(" "))
+        cases, self.aaa = (int(x) for x in self.read().split(" "))
         for i in range(1, cases + 1):
             self.debug("")
             self.handle_case(i)
 
-    def handle_case(self, i):
-        raise NotImplementedError
-
 
 class CaseHandler(BaseInteractiveCaseHandler):
+    def query(self, data):
+        self.write(" ".join(str(x) for x in data))
+        response_ints = [int(x) for x in self.read().split(" ")]
+        return response_ints
+
+    def guess(self, data):
+        self.write(data)
+        assert self.read() == "1"
+
     def handle_case(self, _i):
         pass
 
