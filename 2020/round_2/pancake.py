@@ -1,5 +1,5 @@
 """
-Didn't work. No idea why. Probably a rounding error when doing the square root.
+https://codingcompetitions.withgoogle.com/codejam/round/000000000019ffb9/00000000003384ea
 """
 
 
@@ -19,15 +19,19 @@ def invert_triangle(x):
 
 
 def formula(k, t):
-    return math.floor((math.sqrt(
+    n = math.floor((math.sqrt(
         (k-1)**2 + 4*t
     ) - (k-1)) // 2)
+    for x in range(n+2, n-3, -1):
+        if x * (x + k - 1) <= t:
+            # assert x == n
+            return x
 
 
 def solve_case(l, r):
     initial_l, initial_r = l, r
     # print('---')
-    print('initial:', initial_l, initial_r)
+    # print('initial:', initial_l, initial_r)
     # print('---')
     ls = []
     rs = []
