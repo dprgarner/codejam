@@ -5,10 +5,6 @@ customised.
 from os import sys
 
 
-class WrongAnswerException(Exception):
-    pass
-
-
 class BaseInteractiveCaseHandler:
     """
     Boilerplate class.
@@ -28,14 +24,12 @@ class BaseInteractiveCaseHandler:
 
     def read(self):
         input_ = next(self.source).strip()
-        # self.debug("In: ", input_)
-        if input_ == "-1":
-            raise WrongAnswerException
+        self.debug("In: {}".format(input_))
         return input_
 
     def write(self, *txt):
+        self.debug("Out:", *txt)
         print(*txt)
-        # self.debug("Out: ", *txt)
         sys.stdout.flush()
 
     def debug(self, *txt):
@@ -46,28 +40,46 @@ class BaseInteractiveCaseHandler:
 
     def run(self):
         # Example read
-        cases, self.aaa = (int(x) for x in self.read().split(" "))
+        cases, self.a, self.b = (int(x) for x in self.read().split(" "))
+        if self.a < 10**9 - 50:
+            raise Exception('no idea')
         for i in range(1, cases + 1):
+            self.debug("Case", i)
             self.handle_case(i)
 
     def handle_case(self, *args):
         raise NotImplementedError
 
 
-class CaseHandler(BaseInteractiveCaseHandler):
-    def query(self, data):
-        # Example method
-        self.write(" ".join(str(x) for x in data))
-        response_ints = [int(x) for x in self.read().split(" ")]
-        return response_ints
+class WrongAnswerException(Exception):
+    pass
 
-    def guess(self, data):
-        # Example method
-        self.write(data)
-        assert self.read() == "1"
+
+class FoundException(Exception):
+    pass
+
+
+class CaseHandler(BaseInteractiveCaseHandler):
+    def throw_dart(self, x, y):
+        self.write("{} {}".format(x, y))
+        result = self.read()
+        if input_ == "WRONG":
+            raise WrongAnswerException
+        if result == "CENTER":
+            raise FoundException
+        return result == "HIT"
+
+    def refine(self):
+        for i in range()
+        x, y = 0, 0
+        result = self.throw_dart(x, y)
 
     def handle_case(self, _i):
-        pass
+        try:
+            while True:
+                self.refine()
+        except FoundException:
+            pass
 
 
 CaseHandler().run()
