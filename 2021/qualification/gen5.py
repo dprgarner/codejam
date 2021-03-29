@@ -25,12 +25,12 @@ for _ in range(t):
     cheater_score = 0
     for idx, s in enumerate(ss):
         for q in qs:
-            if idx == cheat and randint(0, 1) == 0:
+            if idx == (cheat - 1) and randint(0, 1) == 0:
                 bit = "1"
                 cheater_score += 1
             elif random() < (1 / (1 + math.exp(q - s))):
                 bit = "1"
-                if idx == cheat:
+                if idx == (cheat - 1):
                     cheater_score += 1
             else:
                 bit = "0"
@@ -39,15 +39,15 @@ for _ in range(t):
 
     sys.stdout.flush()
 
-    debug("First ten q difficulties:")
-    for i in range(10):
-        debug(qs[i])
+    # debug("First ten q difficulties:")
+    # for i in range(10):
+    #     debug(qs[i])
 
-    debug("First six skills:")
-    for i in range(6):
-        debug(ss[i])
+    # debug("First six skills:")
+    # for i in range(6):
+    #     debug(ss[i])
 
-    debug("Cheater score:", cheater_score)
+    # debug("Cheater score:", cheater_score)
 
     answer = int(input().split(": ")[1])
     if answer == cheat:
@@ -55,7 +55,7 @@ for _ in range(t):
     else:
         incorrect += 1
 
-    debug("dishonest skillL", ss[cheat])
+    # debug("dishonest skill", ss[cheat - 1])
 
     debug(
         "Accuracy: {:.2f}%\t ({} / {})\n".format(
